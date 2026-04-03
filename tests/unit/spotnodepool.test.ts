@@ -65,7 +65,7 @@ describe("SpotNodePoolHandler", () => {
     const [resource, body] = vi.mocked(client.create).mock.calls[0];
     expect(resource).toBe("spotnodepools");
     expect(body.metadata.namespace).toBe(NAMESPACE);
-    expect(body.metadata.name).toBeUndefined();
+    expect(body.metadata.name).toMatch(/^[0-9a-f-]{36}$/); // auto-generated UUID
     expect(body.spec.cloudSpace).toBe("cs-east");
     expect(body.spec.serverClass).toBe("gp.medium");
     expect(body.spec.bidPrice).toBe("0.040");

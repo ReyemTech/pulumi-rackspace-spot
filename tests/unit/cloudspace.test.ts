@@ -81,7 +81,7 @@ describe("CloudSpaceHandler", () => {
         cloud: "default",
         kubernetesVersion: "1.28",
         cni: "cilium",
-        haControlPlane: true,
+        HAControlPlane: true,
         deploymentType: "gen2",
         webhook: "https://webhook.example.com",
       },
