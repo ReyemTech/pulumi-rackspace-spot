@@ -24,14 +24,16 @@ function buildSpec(inputs: SpotNodePoolInputs): Record<string, any> {
     customTaints: inputs.taints ?? [],
   };
 
+  // Rackspace API always requires spec.desired, even with autoscaling
   if (inputs.autoscaling) {
+    spec.desired = inputs.desiredCount ?? inputs.autoscaling.minNodes;
     spec.autoscaling = {
       enabled: true,
       minNodes: inputs.autoscaling.minNodes,
       maxNodes: inputs.autoscaling.maxNodes,
     };
-  } else if (inputs.desiredCount !== undefined) {
-    spec.desired = inputs.desiredCount;
+  } else {
+    spec.desired = inputs.desiredCount ?? 1;
   }
 
   return spec;
@@ -143,14 +145,14 @@ export class SpotNodePoolHandler {
       customTaints: news.taints ?? [],
     };
 
-    // Handle autoscaling vs desired (mutually exclusive)
+    // Rackspace API always requires spec.desired, even with autoscaling
     if (news.autoscaling) {
+      updatedSpec.desired = news.desiredCount ?? news.autoscaling.minNodes;
       updatedSpec.autoscaling = {
         enabled: true,
         minNodes: news.autoscaling.minNodes,
         maxNodes: news.autoscaling.maxNodes,
       };
-      delete updatedSpec.desired;
     } else {
       delete updatedSpec.autoscaling;
       if (news.desiredCount !== undefined) {
