@@ -8,8 +8,8 @@ export async function getCloudspace(client: SpotClient, inputs: { name: string }
       region: cs.spec.region,
       kubernetesVersion: cs.spec.kubernetesVersion,
       cni: cs.spec.cni,
-      haControlPlane: cs.spec.haControlPlane,
-      apiServerEndpoint: cs.status?.apiServerEndpoint ?? "",
+      haControlPlane: cs.spec.HAControlPlane ?? cs.spec.haControlPlane ?? false,
+      apiServerEndpoint: cs.status?.APIServerEndpoint ?? cs.status?.apiServerEndpoint ?? "",
       phase: cs.status?.phase ?? "",
     },
   };

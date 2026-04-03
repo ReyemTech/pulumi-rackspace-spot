@@ -2,7 +2,8 @@ import type { SpotClient } from "../client";
 
 export async function getKubeconfig(client: SpotClient, token: string, inputs: { cloudspaceName: string }) {
   const cs = await client.get("cloudspaces", inputs.cloudspaceName);
-  const endpoint = cs.status?.apiServerEndpoint;
+  // K8s CRD uses PascalCase field names
+  const endpoint = cs.status?.APIServerEndpoint ?? cs.status?.apiServerEndpoint;
   if (!endpoint) throw new Error(`Cloudspace ${inputs.cloudspaceName} has no API endpoint yet`);
 
   const raw = JSON.stringify({

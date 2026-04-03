@@ -1,13 +1,20 @@
+/**
+ * Rackspace Spot OIDC issuer. Discovered via .well-known/openid-configuration.
+ * This is the public Auth0 tenant for Rackspace Spot — present in every JWT they issue.
+ */
+const OIDC_ISSUER = "https://login.spot.rackspace.com";
+
+/**
+ * Rackspace Spot Auth0 client ID (audience). This is a public OIDC value present
+ * in every JWT's `aud` claim — not a secret. OIDC discovery doesn't expose
+ * per-application client IDs, so this must be hardcoded.
+ */
+const OIDC_CLIENT_ID = "mwG3lUMV8KyeMqHe4fJ5Bb3nM1vBvRNa";
+
 export interface TokenResult {
   idToken: string;
   orgId: string;
   namespace: string;
-}
-
-interface Auth0ClientEntry {
-  name: string;
-  domain: string;
-  clientId: string;
 }
 
 interface JwtPayload {
@@ -39,8 +46,7 @@ export class SpotAuth {
       return this.cache.result;
     }
 
-    const { domain, clientId } = await this.fetchAuth0Client();
-    const idToken = await this.exchangeToken(domain, clientId);
+    const idToken = await this.exchangeToken();
     const payload = this.decodeJwtPayload(idToken);
 
     const orgId = payload.org_id;
@@ -56,46 +62,33 @@ export class SpotAuth {
   // Private helpers
   // ---------------------------------------------------------------------------
 
-  private async fetchAuth0Client(): Promise<{ domain: string; clientId: string }> {
-    const url = `${this.apiBase}/organizer/auth0clients`;
-    const res = await fetch(url);
-
+  private async discoverTokenEndpoint(): Promise<string> {
+    // Use OIDC discovery to find the token endpoint — unauthenticated and resilient
+    // to domain changes. Only the clientId is hardcoded (OIDC discovery doesn't
+    // expose per-application client IDs).
+    const res = await fetch(`${OIDC_ISSUER}/.well-known/openid-configuration`);
     if (!res.ok) {
-      throw new Error(
-        `Failed to fetch auth0clients (HTTP ${res.status}): ${url}`
-      );
+      throw new Error(`OIDC discovery failed (HTTP ${res.status}): ${OIDC_ISSUER}`);
     }
-
-    const clients: Auth0ClientEntry[] = await res.json();
-    const entry = clients.find((c) => c.name === "NGPC UI");
-
-    if (!entry) {
-      throw new Error(
-        'NGPC UI entry not found in auth0clients response'
-      );
-    }
-
-    return { domain: entry.domain, clientId: entry.clientId };
+    const config: { token_endpoint: string } = await res.json();
+    return config.token_endpoint;
   }
 
-  private async exchangeToken(domain: string, clientId: string): Promise<string> {
-    const url = `https://${domain}/oauth/token`;
-    const body = new URLSearchParams({
-      grant_type: "refresh_token",
-      client_id: clientId,
-      refresh_token: this.refreshToken,
-    });
+  private async exchangeToken(): Promise<string> {
+    const tokenEndpoint = await this.discoverTokenEndpoint();
 
-    const res = await fetch(url, {
+    const res = await fetch(tokenEndpoint, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: body.toString(),
+      body: new URLSearchParams({
+        grant_type: "refresh_token",
+        client_id: OIDC_CLIENT_ID,
+        refresh_token: this.refreshToken,
+      }).toString(),
     });
 
     if (!res.ok) {
-      throw new Error(
-        `Token exchange failed (HTTP ${res.status}) against ${url}`
-      );
+      throw new Error(`Token exchange failed (HTTP ${res.status}) against ${tokenEndpoint}`);
     }
 
     const data: { id_token: string } = await res.json();

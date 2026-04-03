@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { SpotClient, K8sResource } from "../client";
 
 const RESOURCE = "spotnodepools";
@@ -46,9 +47,9 @@ function apiToOutputs(resource: K8sResource): Record<string, any> {
     labels: spec.customLabels ?? {},
     annotations: spec.customAnnotations ?? {},
     taints: spec.customTaints ?? [],
-    nodepoolId: metadata.name,
-    wonCount: status?.wonCount,
-    bidStatus: status?.bidStatus,
+    nodepoolId: metadata.name ?? "",
+    wonCount: status?.wonCount ?? 0,
+    bidStatus: status?.bidStatus ?? "",
   };
 
   if (spec.autoscaling?.enabled) {
@@ -81,6 +82,7 @@ export class SpotNodePoolHandler {
       apiVersion: "ngpc.rxt.io/v1",
       kind: "SpotNodePool",
       metadata: {
+        name: randomUUID(),
         namespace: this.namespace,
       },
       spec: buildSpec(inputs),
@@ -88,9 +90,7 @@ export class SpotNodePoolHandler {
 
     const resource = await this.client.create(RESOURCE, body);
     const id: string = resource.metadata.name;
-    const outs = apiToOutputs(resource);
-
-    return { id, outs };
+    return { id, outs: JSON.parse(JSON.stringify(apiToOutputs(resource))) };
   }
 
   async read(id: string): Promise<{ id: string; props: Record<string, any> }> {

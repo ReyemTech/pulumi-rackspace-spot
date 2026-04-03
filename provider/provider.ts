@@ -1,3 +1,6 @@
+import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
 import * as provider from "@pulumi/pulumi/provider";
 import { SpotAuth } from "./auth";
 import { SpotClient } from "./client";
@@ -65,12 +68,14 @@ export class RackspaceSpotProvider implements provider.Provider {
   private async ensureClient(): Promise<{ client: SpotClient; token: string; namespace: string }> {
     const token =
       this.refreshToken ??
-      process.env["RACKSPACE_SPOT_TOKEN"];
+      process.env["RACKSPACE_SPOT_TOKEN"] ??
+      this.readSpotConfig();
 
     if (!token) {
       throw new Error(
         "A Rackspace Spot refresh token is required. " +
-          "Set RACKSPACE_SPOT_TOKEN or configure rackspace-spot:token."
+          "Set rackspace-spot:token, RACKSPACE_SPOT_TOKEN env var, " +
+          "or run `spotctl configure` (~/.spot_config)."
       );
     }
 
@@ -78,6 +83,21 @@ export class RackspaceSpotProvider implements provider.Provider {
     const { idToken, namespace } = await auth.getToken();
     const client = new SpotClient(API_BASE, namespace, idToken);
     return { client, token: idToken, namespace };
+  }
+
+  /** Read refreshToken from ~/.spot_config (created by `spotctl configure`). */
+  private readSpotConfig(): string | undefined {
+    try {
+      const configPath = path.join(os.homedir(), ".spot_config");
+      const content = fs.readFileSync(configPath, "utf-8");
+      for (const line of content.split("\n")) {
+        const match = line.match(/^refreshToken:\s*(.+)/);
+        if (match) return match[1]!.trim();
+      }
+    } catch {
+      // File doesn't exist or can't be read — fall through
+    }
+    return undefined;
   }
 
   // -------------------------------------------------------------------------

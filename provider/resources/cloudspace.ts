@@ -35,7 +35,7 @@ function buildBody(inputs: CloudSpaceInputs, namespace: string): K8sResource {
       cloud: "default",
       kubernetesVersion: inputs.kubernetesVersion,
       cni: inputs.cni,
-      haControlPlane: inputs.haControlPlane,
+      HAControlPlane: inputs.haControlPlane,
       deploymentType: inputs.deploymentType ?? "gen2",
       webhook: inputs.preemptionWebhookUrl,
     },
@@ -45,17 +45,18 @@ function buildBody(inputs: CloudSpaceInputs, namespace: string): K8sResource {
 function mapToOutputs(resource: K8sResource): Record<string, any> {
   const spec = resource.spec ?? {};
   const status = resource.status ?? {};
-  return {
-    cloudspaceName: resource.metadata?.name,
-    region: spec.region,
-    kubernetesVersion: spec.kubernetesVersion,
-    cni: spec.cni,
-    haControlPlane: spec.haControlPlane,
-    preemptionWebhookUrl: spec.webhook,
-    deploymentType: spec.deploymentType,
-    apiServerEndpoint: status.apiServerEndpoint,
-    phase: status.phase,
+  const result: Record<string, any> = {
+    cloudspaceName: resource.metadata?.name ?? "",
+    region: spec.region ?? "",
+    kubernetesVersion: spec.kubernetesVersion ?? "",
+    cni: spec.cni ?? "calico",
+    haControlPlane: spec.HAControlPlane ?? spec.haControlPlane ?? false,
+    preemptionWebhookUrl: spec.webhook ?? "",
+    deploymentType: spec.deploymentType ?? "gen2",
+    apiServerEndpoint: status.APIServerEndpoint ?? status.apiServerEndpoint ?? "",
+    phase: status.phase ?? "",
   };
+  return result;
 }
 
 export class CloudSpaceHandler {
@@ -72,16 +73,15 @@ export class CloudSpaceHandler {
     const resource = await this.client.create(RESOURCE, body);
     return {
       id: inputs.cloudspaceName,
-      outs: mapToOutputs(resource),
+      outs: JSON.parse(JSON.stringify(mapToOutputs(resource))),
     };
   }
 
-  async read(id: string): Promise<{ id: string; props: Record<string, any> }> {
+  async read(id: string): Promise<{ id: string; props: Record<string, any>; inputs: Record<string, any> }> {
     const resource = await this.client.get(RESOURCE, id);
-    return {
-      id,
-      props: mapToOutputs(resource),
-    };
+    // JSON round-trip to strip non-serializable values (protobuf requires plain JSON)
+    const outputs = JSON.parse(JSON.stringify(mapToOutputs(resource)));
+    return { id, props: outputs, inputs: outputs };
   }
 
   diff(
@@ -129,7 +129,7 @@ export class CloudSpaceHandler {
       spec: {
         ...latest.spec,
         kubernetesVersion: news.kubernetesVersion,
-        haControlPlane: news.haControlPlane,
+        HAControlPlane: news.haControlPlane,
         webhook: news.preemptionWebhookUrl,
       },
     };
