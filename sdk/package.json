@@ -13,7 +13,7 @@
   },
   "keywords": ["pulumi", "rackspace", "spot", "kubernetes", "cloud"],
   "author": "ReyemTech <mario@reyem.tech>",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/reyemtech/pulumi-rackspace-spot.git"
