@@ -1,3 +1,11 @@
+## [0.1.3](https://github.com/ReyemTech/pulumi-rackspace-spot/compare/v0.1.2...v0.1.3) (2026-04-03)
+
+
+### Bug Fixes
+
+* always include spec.desired — Rackspace API requires it even with autoscaling ([6acd9fe](https://github.com/ReyemTech/pulumi-rackspace-spot/commit/6acd9fe8f6f605f1a51329dac1d2f2dc8f34b983))
+* update tests — spec.desired is always required by Rackspace API ([d03f665](https://github.com/ReyemTech/pulumi-rackspace-spot/commit/d03f66562dc41b02c084b238f6804a69671adfb7))
+
 ## [0.1.2](https://github.com/ReyemTech/pulumi-rackspace-spot/compare/v0.1.1...v0.1.2) (2026-04-03)
 
 
