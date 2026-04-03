@@ -1,3 +1,10 @@
+## [0.1.2](https://github.com/ReyemTech/pulumi-rackspace-spot/compare/v0.1.1...v0.1.2) (2026-04-03)
+
+
+### Bug Fixes
+
+* match repository.url case to GitHub org (ReyemTech) for npm provenance ([30456d3](https://github.com/ReyemTech/pulumi-rackspace-spot/commit/30456d3ba75b1bdebca650a2187acfed52ebf4f6))
+
 ## [0.1.1](https://github.com/ReyemTech/pulumi-rackspace-spot/compare/v0.1.0...v0.1.1) (2026-04-03)
 
 
