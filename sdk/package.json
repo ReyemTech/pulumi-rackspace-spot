@@ -1,0 +1,27 @@
+{
+  "name": "@reyemtech/pulumi-rackspace-spot",
+  "version": "0.1.0",
+  "description": "Pulumi provider for Rackspace Spot — cloudspaces, node pools, kubeconfig",
+  "main": "bin/index.js",
+  "types": "bin/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "pulumi": {
+    "resource": true,
+    "name": "rackspace-spot"
+  },
+  "keywords": ["pulumi", "rackspace", "spot", "kubernetes", "cloud"],
+  "author": "ReyemTech <mario@reyem.tech>",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reyemtech/pulumi-rackspace-spot.git"
+  },
+  "peerDependencies": {
+    "@pulumi/pulumi": "^3.0.0"
+  },
+  "devDependencies": {
+    "@pulumi/pulumi": "^3.142.0"
+  }
+}

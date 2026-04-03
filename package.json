@@ -1,0 +1,14 @@
+{
+  "name": "pulumi-rackspace-spot-root",
+  "private": true,
+  "workspaces": ["provider", "sdk"],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "@types/node": "^22.0.0"
+  }
+}
