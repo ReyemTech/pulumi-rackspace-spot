@@ -22,7 +22,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/reyemtech/pulumi-rackspace-spot.git"
+    "url": "https://github.com/ReyemTech/pulumi-rackspace-spot.git"
   },
   "peerDependencies": {
     "@pulumi/pulumi": "^3.0.0"
