@@ -1,0 +1,492 @@
+{
+  "name": "rackspace-spot",
+  "description": "Pulumi provider for Rackspace Spot cloud infrastructure.",
+  "version": "0.0.1",
+  "language": {},
+  "config": {
+    "variables": {
+      "token": {
+        "type": "string",
+        "description": "Rackspace Spot refresh token for authentication.",
+        "secret": true
+      }
+    }
+  },
+  "types": {
+    "rackspace-spot:index:Autoscaling": {
+      "description": "Autoscaling configuration for a node pool.",
+      "type": "object",
+      "properties": {
+        "minNodes": {
+          "type": "integer",
+          "description": "Minimum number of nodes."
+        },
+        "maxNodes": {
+          "type": "integer",
+          "description": "Maximum number of nodes."
+        }
+      },
+      "required": ["minNodes", "maxNodes"]
+    },
+    "rackspace-spot:index:Taint": {
+      "description": "A Kubernetes taint applied to nodes in the pool.",
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Taint key."
+        },
+        "value": {
+          "type": "string",
+          "description": "Taint value."
+        },
+        "effect": {
+          "type": "string",
+          "description": "Taint effect (e.g. NoSchedule, PreferNoSchedule, NoExecute)."
+        }
+      },
+      "required": ["key", "effect"]
+    }
+  },
+  "resources": {
+    "rackspace-spot:index:CloudSpace": {
+      "description": "A Rackspace Spot cloudspace (managed Kubernetes cluster).",
+      "inputProperties": {
+        "cloudspaceName": {
+          "type": "string",
+          "description": "Name of the cloudspace."
+        },
+        "region": {
+          "type": "string",
+          "description": "Region where the cloudspace is deployed."
+        },
+        "kubernetesVersion": {
+          "type": "string",
+          "description": "Kubernetes version for the cloudspace."
+        },
+        "cni": {
+          "type": "string",
+          "description": "Container Network Interface plugin."
+        },
+        "haControlPlane": {
+          "type": "boolean",
+          "description": "Whether to enable a highly available control plane."
+        },
+        "preemptionWebhookUrl": {
+          "type": "string",
+          "description": "URL for the preemption webhook."
+        }
+      },
+      "requiredInputs": ["cloudspaceName", "region"],
+      "properties": {
+        "cloudspaceName": {
+          "type": "string",
+          "description": "Name of the cloudspace."
+        },
+        "region": {
+          "type": "string",
+          "description": "Region where the cloudspace is deployed."
+        },
+        "kubernetesVersion": {
+          "type": "string",
+          "description": "Kubernetes version for the cloudspace."
+        },
+        "cni": {
+          "type": "string",
+          "description": "Container Network Interface plugin."
+        },
+        "haControlPlane": {
+          "type": "boolean",
+          "description": "Whether to enable a highly available control plane."
+        },
+        "preemptionWebhookUrl": {
+          "type": "string",
+          "description": "URL for the preemption webhook."
+        },
+        "apiServerEndpoint": {
+          "type": "string",
+          "description": "API server endpoint for the cloudspace."
+        },
+        "phase": {
+          "type": "string",
+          "description": "Current lifecycle phase of the cloudspace."
+        }
+      },
+      "required": ["cloudspaceName", "region", "apiServerEndpoint", "phase"]
+    },
+    "rackspace-spot:index:SpotNodePool": {
+      "description": "A spot-priced node pool attached to a cloudspace.",
+      "inputProperties": {
+        "cloudspaceName": {
+          "type": "string",
+          "description": "Name of the cloudspace this node pool belongs to."
+        },
+        "serverClass": {
+          "type": "string",
+          "description": "Server class for the node pool."
+        },
+        "bidPrice": {
+          "type": "number",
+          "description": "Bid price for spot nodes."
+        },
+        "desiredCount": {
+          "type": "integer",
+          "description": "Desired number of nodes."
+        },
+        "autoscaling": {
+          "$ref": "#/types/rackspace-spot:index:Autoscaling",
+          "description": "Autoscaling configuration."
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Kubernetes labels to apply to nodes."
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Kubernetes annotations to apply to nodes."
+        },
+        "taints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/types/rackspace-spot:index:Taint"
+          },
+          "description": "Kubernetes taints to apply to nodes."
+        }
+      },
+      "requiredInputs": ["cloudspaceName", "serverClass", "bidPrice"],
+      "properties": {
+        "cloudspaceName": {
+          "type": "string",
+          "description": "Name of the cloudspace this node pool belongs to."
+        },
+        "serverClass": {
+          "type": "string",
+          "description": "Server class for the node pool."
+        },
+        "bidPrice": {
+          "type": "number",
+          "description": "Bid price for spot nodes."
+        },
+        "desiredCount": {
+          "type": "integer",
+          "description": "Desired number of nodes."
+        },
+        "autoscaling": {
+          "$ref": "#/types/rackspace-spot:index:Autoscaling",
+          "description": "Autoscaling configuration."
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Kubernetes labels to apply to nodes."
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Kubernetes annotations to apply to nodes."
+        },
+        "taints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/types/rackspace-spot:index:Taint"
+          },
+          "description": "Kubernetes taints to apply to nodes."
+        },
+        "nodepoolId": {
+          "type": "string",
+          "description": "Unique identifier for the node pool."
+        },
+        "wonCount": {
+          "type": "integer",
+          "description": "Number of spot nodes currently won."
+        },
+        "bidStatus": {
+          "type": "string",
+          "description": "Current bid status."
+        }
+      },
+      "required": ["cloudspaceName", "serverClass", "bidPrice", "nodepoolId", "wonCount", "bidStatus"]
+    },
+    "rackspace-spot:index:OnDemandNodePool": {
+      "description": "An on-demand node pool attached to a cloudspace.",
+      "inputProperties": {
+        "cloudspaceName": {
+          "type": "string",
+          "description": "Name of the cloudspace this node pool belongs to."
+        },
+        "serverClass": {
+          "type": "string",
+          "description": "Server class for the node pool."
+        },
+        "desiredCount": {
+          "type": "integer",
+          "description": "Desired number of nodes."
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Kubernetes labels to apply to nodes."
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Kubernetes annotations to apply to nodes."
+        },
+        "taints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/types/rackspace-spot:index:Taint"
+          },
+          "description": "Kubernetes taints to apply to nodes."
+        }
+      },
+      "requiredInputs": ["cloudspaceName", "serverClass", "desiredCount"],
+      "properties": {
+        "cloudspaceName": {
+          "type": "string",
+          "description": "Name of the cloudspace this node pool belongs to."
+        },
+        "serverClass": {
+          "type": "string",
+          "description": "Server class for the node pool."
+        },
+        "desiredCount": {
+          "type": "integer",
+          "description": "Desired number of nodes."
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Kubernetes labels to apply to nodes."
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Kubernetes annotations to apply to nodes."
+        },
+        "taints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/types/rackspace-spot:index:Taint"
+          },
+          "description": "Kubernetes taints to apply to nodes."
+        },
+        "nodepoolId": {
+          "type": "string",
+          "description": "Unique identifier for the node pool."
+        },
+        "reservedCount": {
+          "type": "integer",
+          "description": "Number of on-demand nodes currently reserved."
+        },
+        "reservedStatus": {
+          "type": "string",
+          "description": "Current reservation status."
+        }
+      },
+      "required": ["cloudspaceName", "serverClass", "desiredCount", "nodepoolId", "reservedCount", "reservedStatus"]
+    }
+  },
+  "functions": {
+    "rackspace-spot:index:getCloudspace": {
+      "description": "Look up an existing cloudspace by name.",
+      "inputs": {
+        "description": "Inputs for getCloudspace.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the cloudspace to look up."
+          }
+        },
+        "required": ["name"],
+        "type": "object"
+      },
+      "outputs": {
+        "description": "Outputs from getCloudspace.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the cloudspace."
+          },
+          "region": {
+            "type": "string",
+            "description": "Region where the cloudspace is deployed."
+          },
+          "kubernetesVersion": {
+            "type": "string",
+            "description": "Kubernetes version."
+          },
+          "cni": {
+            "type": "string",
+            "description": "Container Network Interface plugin."
+          },
+          "haControlPlane": {
+            "type": "boolean",
+            "description": "Whether the control plane is highly available."
+          },
+          "apiServerEndpoint": {
+            "type": "string",
+            "description": "API server endpoint."
+          },
+          "phase": {
+            "type": "string",
+            "description": "Current lifecycle phase."
+          }
+        },
+        "required": ["name", "region", "kubernetesVersion", "cni", "haControlPlane", "apiServerEndpoint", "phase"],
+        "type": "object"
+      }
+    },
+    "rackspace-spot:index:getKubeconfig": {
+      "description": "Assemble a kubeconfig from an existing cloudspace.",
+      "inputs": {
+        "description": "Inputs for getKubeconfig.",
+        "properties": {
+          "cloudspaceName": {
+            "type": "string",
+            "description": "Name of the cloudspace to generate a kubeconfig for."
+          }
+        },
+        "required": ["cloudspaceName"],
+        "type": "object"
+      },
+      "outputs": {
+        "description": "Outputs from getKubeconfig.",
+        "properties": {
+          "raw": {
+            "type": "string",
+            "description": "Raw kubeconfig YAML/JSON string.",
+            "secret": true
+          },
+          "host": {
+            "type": "string",
+            "description": "API server host URL."
+          },
+          "clusterName": {
+            "type": "string",
+            "description": "Cluster name used in the kubeconfig."
+          }
+        },
+        "required": ["raw", "host", "clusterName"],
+        "type": "object"
+      }
+    },
+    "rackspace-spot:index:getRegions": {
+      "description": "List all available Rackspace Spot regions.",
+      "inputs": {
+        "description": "Inputs for getRegions (none required).",
+        "properties": {},
+        "type": "object"
+      },
+      "outputs": {
+        "description": "Outputs from getRegions.",
+        "properties": {
+          "regions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Region name."
+                },
+                "country": {
+                  "type": "string",
+                  "description": "Country where the region is located."
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Human-readable description of the region."
+                }
+              },
+              "required": ["name", "country", "description"]
+            },
+            "description": "List of available regions."
+          }
+        },
+        "required": ["regions"],
+        "type": "object"
+      }
+    },
+    "rackspace-spot:index:getServerClasses": {
+      "description": "List available server classes, optionally filtered by region.",
+      "inputs": {
+        "description": "Inputs for getServerClasses.",
+        "properties": {
+          "region": {
+            "type": "string",
+            "description": "Optional region to filter server classes by."
+          }
+        },
+        "type": "object"
+      },
+      "outputs": {
+        "description": "Outputs from getServerClasses.",
+        "properties": {
+          "serverClasses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Server class name."
+                },
+                "region": {
+                  "type": "string",
+                  "description": "Region where this server class is available."
+                },
+                "category": {
+                  "type": "string",
+                  "description": "Category of the server class."
+                },
+                "cpu": {
+                  "type": "string",
+                  "description": "CPU specification."
+                },
+                "memory": {
+                  "type": "string",
+                  "description": "Memory specification."
+                },
+                "flavorType": {
+                  "type": "string",
+                  "description": "Flavor type of the server class."
+                },
+                "available": {
+                  "type": "integer",
+                  "description": "Number of available instances."
+                },
+                "capacity": {
+                  "type": "integer",
+                  "description": "Total capacity."
+                }
+              },
+              "required": ["name", "region", "category", "cpu", "memory", "flavorType", "available", "capacity"]
+            },
+            "description": "List of available server classes."
+          }
+        },
+        "required": ["serverClasses"],
+        "type": "object"
+      }
+    }
+  }
+}
