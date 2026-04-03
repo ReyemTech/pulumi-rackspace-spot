@@ -101,7 +101,7 @@ describe("SpotNodePoolHandler", () => {
 
     const [, body] = vi.mocked(client.create).mock.calls[0];
     expect(body.spec.autoscaling).toEqual({ enabled: true, minNodes: 1, maxNodes: 5 });
-    expect(body.spec.desired).toBeUndefined();
+    expect(body.spec.desired).toBe(1); // Rackspace API requires desired even with autoscaling
     expect(body.spec.bidPrice).toBe("0.050");
   });
 
@@ -344,7 +344,7 @@ describe("SpotNodePoolHandler", () => {
 
     const [, , putBody] = vi.mocked(client.update).mock.calls[0];
     expect(putBody.spec.autoscaling).toEqual({ enabled: true, minNodes: 1, maxNodes: 5 });
-    expect(putBody.spec.desired).toBeUndefined();
+    expect(putBody.spec.desired).toBe(1); // Rackspace API requires desired even with autoscaling
   });
 
   // --- delete ---
