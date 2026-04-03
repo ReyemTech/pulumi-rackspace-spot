@@ -12,5 +12,5 @@
     "resolveJsonModule": true,
     "declaration": true
   },
-  "include": ["*.ts", "resources/*.ts", "functions/*.ts"]
+  "include": ["*.ts", "resources/*.ts", "functions/*.ts", "index.ts"]
 }
