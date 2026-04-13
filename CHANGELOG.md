@@ -1,3 +1,10 @@
+## [0.2.1](https://github.com/ReyemTech/pulumi-rackspace-spot/compare/v0.2.0...v0.2.1) (2026-04-13)
+
+
+### Bug Fixes
+
+* include provider binary in npm package via files field ([d9f7d6a](https://github.com/ReyemTech/pulumi-rackspace-spot/commit/d9f7d6a5a4e96ddfc712764cc93c9874ab802d31))
+
 # [0.2.0](https://github.com/ReyemTech/pulumi-rackspace-spot/compare/v0.1.4...v0.2.0) (2026-04-13)
 
 
