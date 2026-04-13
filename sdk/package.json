@@ -13,7 +13,7 @@
     "pulumi-resource-rackspace-spot": "cmd/pulumi-resource-rackspace-spot.js"
   },
   "scripts": {
-    "build": "tsc && rm -rf cmd/provider && cp -r ../provider/bin cmd/provider",
+    "build": "tsc && rm -rf cmd/provider && cp -r ../provider/bin cmd/provider && cp ../provider/package.json cmd/package.json && cp ../provider/schema.json cmd/schema.json",
     "postinstall": "node cmd/install-plugin.js"
   },
   "pulumi": {
