@@ -1,6 +1,6 @@
 {
   "name": "@reyemtech/pulumi-rackspace-spot",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Pulumi provider for Rackspace Spot — cloudspaces, node pools, kubeconfig",
   "main": "bin/index.js",
   "types": "bin/index.d.ts",

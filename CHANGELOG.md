@@ -1,3 +1,10 @@
+## [0.2.2](https://github.com/ReyemTech/pulumi-rackspace-spot/compare/v0.2.1...v0.2.2) (2026-04-13)
+
+
+### Bug Fixes
+
+* include package.json and schema.json in provider bundle ([ecb3923](https://github.com/ReyemTech/pulumi-rackspace-spot/commit/ecb3923901ade4caf49d383f3f4bf78c2ffe07f5))
+
 ## [0.2.1](https://github.com/ReyemTech/pulumi-rackspace-spot/compare/v0.2.0...v0.2.1) (2026-04-13)
 
 
