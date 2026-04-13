@@ -1,3 +1,10 @@
+# [0.2.0](https://github.com/ReyemTech/pulumi-rackspace-spot/compare/v0.1.4...v0.2.0) (2026-04-13)
+
+
+### Features
+
+* bundle provider binary in SDK package ([fe0fb6d](https://github.com/ReyemTech/pulumi-rackspace-spot/commit/fe0fb6d9f2f17b4c3a2b79c32986d539e89fe543))
+
 ## [0.1.4](https://github.com/ReyemTech/pulumi-rackspace-spot/compare/v0.1.3...v0.1.4) (2026-04-13)
 
 
