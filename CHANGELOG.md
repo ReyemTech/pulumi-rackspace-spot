@@ -1,3 +1,10 @@
+## [0.1.4](https://github.com/ReyemTech/pulumi-rackspace-spot/compare/v0.1.3...v0.1.4) (2026-04-13)
+
+
+### Bug Fixes
+
+* bump provider version to 0.1.2 to match SDK ([bfafc56](https://github.com/ReyemTech/pulumi-rackspace-spot/commit/bfafc56209754efe9f41940e398effa60a3707e8))
+
 ## [0.1.3](https://github.com/ReyemTech/pulumi-rackspace-spot/compare/v0.1.2...v0.1.3) (2026-04-03)
 
 
