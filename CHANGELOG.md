@@ -1,3 +1,10 @@
+## [0.2.4](https://github.com/ReyemTech/pulumi-rackspace-spot/compare/v0.2.3...v0.2.4) (2026-07-30)
+
+
+### Bug Fixes
+
+* stamp bundled cmd/package.json at pack time, not build time ([6f86a85](https://github.com/ReyemTech/pulumi-rackspace-spot/commit/6f86a8574645cf91ebd0a63be31e72827e973604))
+
 ## [0.2.3](https://github.com/ReyemTech/pulumi-rackspace-spot/compare/v0.2.2...v0.2.3) (2026-07-30)
 
 
