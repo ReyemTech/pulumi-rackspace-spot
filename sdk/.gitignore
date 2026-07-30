@@ -1,1 +1,3 @@
 cmd/provider/
+cmd/package.json
+cmd/schema.json

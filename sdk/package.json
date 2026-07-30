@@ -13,7 +13,9 @@
     "pulumi-resource-rackspace-spot": "cmd/pulumi-resource-rackspace-spot.js"
   },
   "scripts": {
-    "build": "tsc && rm -rf cmd/provider && cp -r ../provider/bin cmd/provider && node -e \"const f=require('fs');const p=JSON.parse(f.readFileSync('../provider/package.json'));p.version=require('./package.json').version;f.writeFileSync('cmd/package.json',JSON.stringify(p,null,2)+'\\n')\" && cp ../provider/schema.json cmd/schema.json",
+    "build": "tsc && rm -rf cmd/provider && cp -r ../provider/bin cmd/provider && cp ../provider/schema.json cmd/schema.json && npm run stamp-cmd-manifest",
+    "stamp-cmd-manifest": "node -e \"const fs=require('fs');const m=JSON.parse(fs.readFileSync('../provider/package.json','utf8'));m.version=JSON.parse(fs.readFileSync('./package.json','utf8')).version;fs.writeFileSync('cmd/package.json',JSON.stringify(m,null,2)+'\\n')\"",
+    "prepack": "npm run stamp-cmd-manifest",
     "postinstall": "node cmd/install-plugin.js"
   },
   "pulumi": {
