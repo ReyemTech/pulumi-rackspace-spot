@@ -1,19 +1,42 @@
 #!/usr/bin/env node
 /**
- * Postinstall hook — symlinks the provider binary so Pulumi can find it on $PATH.
- * Creates: /usr/local/bin/pulumi-resource-rackspace-spot -> this package's cmd/pulumi-resource-rackspace-spot.js
+ * Postinstall hook — registers the provider in Pulumi's plugin cache so the
+ * engine can find it without a PATH entry or elevated permissions.
+ *
+ * Writes $PULUMI_HOME/plugins/resource-rackspace-spot-v<version>/pulumi-resource-rackspace-spot,
+ * a shim that execs this package's entrypoint from inside node_modules, where its
+ * dependencies resolve. The directory is version-keyed and is exactly where the
+ * engine looks before attempting a download, so an upgrade registers itself.
+ *
+ * Previously this symlinked into /usr/local/bin, which is root-owned on most
+ * Linux hosts — the link was silently skipped and Pulumi fell through to
+ * downloading the plugin from get.pulumi.com, which 404s/403s for a private
+ * provider.
  */
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 
-const src = path.join(__dirname, "pulumi-resource-rackspace-spot.js");
-const dest = "/usr/local/bin/pulumi-resource-rackspace-spot";
+const PLUGIN_NAME = "rackspace-spot";
+
+// The version Pulumi requests is the SDK package version, so key the directory
+// on that rather than on the bundled cmd/package.json.
+const { version } = require("../package.json");
+
+const entrypoint = path.join(__dirname, "pulumi-resource-rackspace-spot.js");
+const pulumiHome = process.env.PULUMI_HOME || path.join(os.homedir(), ".pulumi");
+const dir = path.join(pulumiHome, "plugins", `resource-${PLUGIN_NAME}-v${version}`);
+const dest = path.join(dir, `pulumi-resource-${PLUGIN_NAME}`);
 
 try {
-  if (fs.existsSync(dest)) fs.unlinkSync(dest);
-  fs.symlinkSync(src, dest);
-  console.log(`pulumi-rackspace-spot: linked provider to ${dest}`);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(dest, `#!/bin/sh\nexec node ${JSON.stringify(entrypoint)} "$@"\n`);
+  fs.chmodSync(dest, 0o755);
+  console.log(`pulumi-rackspace-spot: registered plugin v${version} at ${dest}`);
 } catch (e) {
-  // Non-fatal — CI environments may not have /usr/local/bin write access
-  console.warn(`pulumi-rackspace-spot: could not link provider to ${dest} (${e.code}). Add ${path.dirname(src)} to PATH manually.`);
+  // Non-fatal — never fail an install over this.
+  console.warn(
+    `pulumi-rackspace-spot: could not register plugin v${version} (${e.code}). ` +
+      `Pulumi will not find the provider; add ${__dirname} to PATH or create ${dest} manually.`,
+  );
 }
