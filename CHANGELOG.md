@@ -1,3 +1,10 @@
+## [0.2.5](https://github.com/ReyemTech/pulumi-rackspace-spot/compare/v0.2.4...v0.2.5) (2026-07-30)
+
+
+### Bug Fixes
+
+* register the provider in Pulumi's plugin cache on install ([69a1f78](https://github.com/ReyemTech/pulumi-rackspace-spot/commit/69a1f78a8f66c401618a1bf187c28572148f96df))
+
 ## [0.2.4](https://github.com/ReyemTech/pulumi-rackspace-spot/compare/v0.2.3...v0.2.4) (2026-07-30)
 
 
