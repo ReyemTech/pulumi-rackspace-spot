@@ -1,3 +1,10 @@
+## [0.2.3](https://github.com/ReyemTech/pulumi-rackspace-spot/compare/v0.2.2...v0.2.3) (2026-07-30)
+
+
+### Bug Fixes
+
+* stamp bundled cmd/package.json with the real SDK version ([60e95d4](https://github.com/ReyemTech/pulumi-rackspace-spot/commit/60e95d42233f02fb2c7a20f502562f6c094e7762))
+
 ## [0.2.2](https://github.com/ReyemTech/pulumi-rackspace-spot/compare/v0.2.1...v0.2.2) (2026-04-13)
 
 
