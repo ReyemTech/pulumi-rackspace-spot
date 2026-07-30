@@ -1,6 +1,6 @@
 {
   "name": "@reyemtech/pulumi-rackspace-spot-provider",
-  "version": "0.1.4",
+  "version": "0.2.2",
   "private": true,
   "main": "bin/index.js",
   "scripts": {
